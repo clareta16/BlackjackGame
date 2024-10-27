@@ -7,27 +7,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Dealer {
-    private Deck deck;
     private List<Card> cards = new ArrayList<>();
     private static final int STAND_THRESHOLD = 17;
 
-    public Dealer() {
-
-    }
+    public Dealer() {}
 
     public List<Card> getCards() {
         return cards;
     }
 
-    public void playTurn() {
+    public void playTurn(Deck deck) {
         cards.clear();
-
         while (getCardsValue() < STAND_THRESHOLD) {
-            drawCard();
+            drawCard(deck);
         }
     }
 
-    private void drawCard() {
+    private void drawCard(Deck deck) {
         if (deck.isEmpty()) {
             throw new IllegalStateException("The deck is empty. Cannot draw a card.");
         }
@@ -51,5 +47,7 @@ public class Dealer {
         return cardsValue;
     }
 }
+
+
 
 

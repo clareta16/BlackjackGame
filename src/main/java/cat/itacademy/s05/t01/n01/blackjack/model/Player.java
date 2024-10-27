@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.UUID;
 
 
 @Table("players")
@@ -15,12 +14,11 @@ public class Player {
     private String username;
     private boolean isPlaying;
     private int wins;
-    private int totalCardsValue; // Valor total de les cartes del jugador
-
+    private int totalCardsValue;
 
     public Player(String username) {
     this.username = username;
-    this.totalCardsValue = 0; // Initialize to 0
+    this.totalCardsValue = 0;
     }
 
     public String getId() {
@@ -47,29 +45,16 @@ public class Player {
         this.wins = wins;
     }
 
-    public void setTotalCardsValue(int totalCardsValue) {
-        this.totalCardsValue = totalCardsValue;
+    public void setPlaying(boolean isPlaying) {
+        this.isPlaying = isPlaying;
     }
 
-    public int getTotalCardsValue() {
-        return totalCardsValue;
-    }
-
-    // Actualitza el valor total de les cartes del jugador
     public void addCard(Card card) {
         if (card != null) {
             this.totalCardsValue += card.getValue();
         } else {
             throw new IllegalArgumentException("Card cannot be null");
         }
-    }
-
-    public boolean isPlaying() {
-        return isPlaying;
-    }
-
-    public void setPlaying(boolean isPlaying) {
-        this.isPlaying = isPlaying;
     }
 
 }

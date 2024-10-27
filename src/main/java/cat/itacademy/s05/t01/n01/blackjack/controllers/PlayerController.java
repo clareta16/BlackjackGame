@@ -21,14 +21,11 @@ public class PlayerController {
 
     @PutMapping("/{playerId}")
     @Operation(summary = "Change player's username", description = "Change the username of a specific player.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Username updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Player not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid username")
-    })
-    public Mono<ResponseEntity<Player>> changePlayerUsername(
-            @PathVariable String playerId, @RequestBody String newUsername) {
-        // Comprovar que el nou nom d'usuari no sigui nul o buit
+    @ApiResponse(responseCode = "200", description = "Username updated successfully")
+    @ApiResponse(responseCode = "404", description = "Player not found")
+    @ApiResponse(responseCode = "400", description = "Invalid username")
+
+    public Mono<ResponseEntity<Player>> changePlayerUsername(@PathVariable String playerId, @RequestBody String newUsername) {
         if (newUsername == null || newUsername.trim().isEmpty()) {
             return Mono.just(ResponseEntity.badRequest().build());
         }
@@ -38,5 +35,3 @@ public class PlayerController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }
-
-

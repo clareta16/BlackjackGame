@@ -11,6 +11,7 @@ public class Deck {
 
     public Deck() {
         deckCards = new Stack<>();
+        //amb Stack només pots accedr a la carta superior
         String[] suits = {"Hearts", "Clubs", "Spades", "Diamonds"};
         String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
         int[] values = {2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11};
@@ -36,6 +37,7 @@ public class Deck {
             throw new IllegalStateException("The deck is empty. Cannot draw a card.");
         }
         return deckCards.pop();
+        //elimina i torna l'última carta
     }
 }
 

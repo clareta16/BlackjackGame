@@ -22,6 +22,4 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleGlobalException(Exception ex) {
         return new ResponseEntity<>("There has been an unexpected error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR); //500
     }
-
-
 }

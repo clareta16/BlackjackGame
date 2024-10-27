@@ -12,68 +12,103 @@ import java.util.List;
 public class Game {
     @Id
     private String id;
-    private Player player; // Només un jugador
+    private Player player;
     private Deck deck;
     private Dealer dealer;
     private List<Card> playerCards;
     private List<Card> dealerCards;
     private boolean isActive;
+    private String result;
 
 
-    // Nou constructor que accepta un jugador
-    public Game() {
-        this.player = player; // Assignar el jugador
-        this.deck = new Deck(); // Inicialitzar el deck
+    public Game(Player player) {
+        this.player = player;
+        this.deck = new Deck();
+        this.dealer = new Dealer();
         this.playerCards = new ArrayList<>();
         this.dealerCards = new ArrayList<>();
-        this.isActive = true; // Establir l'estat del joc a actiu per defecte
-    }
+        this.isActive = true;
 
+        startGame();
+    }
 
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
-
     public Player getPlayer() {
         return player;
     }
-
     public void setPlayer(Player player) {
         this.player = player;
     }
-
+    public void setResult(String result) {
+        this.result = result;
+    }
+    public Deck getDeck() {
+        return deck;
+    }
+    public Dealer getDealer() {
+        return dealer;
+    }
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 
     public void startGame() {
-        this.deck = new Deck();
-        this.deck.shuffle();
-        this.dealer = new Dealer();
-        this.isActive = true;
+        if (deck.isEmpty()) {
+            throw new IllegalStateException("The deck is empty.");
+        }
 
-        // Afegeix dues cartes al jugador i una al dealer
+        player.setPlaying(true);
+        result = null;
+        isActive = true;
+
         playerCards.add(deck.draw());
         playerCards.add(deck.draw());
         dealerCards.add(deck.draw());
-
-        player.setPlaying(true);
+        dealerCards.add(deck.draw());
     }
 
     public void dealCardToPlayer() {
         if (deck.isEmpty()) {
-            throw new IllegalStateException("The deck is empty. There are no more cards to deal.");
+            throw new IllegalStateException("The deck is empty. No more cards can be dealt.");
         }
-        Card dealtCard = deck.draw();
-        playerCards.add(dealtCard);
+        Card drawnCard = deck.draw();
+        playerCards.add(drawnCard);
+        player.addCard(drawnCard);
     }
 
     public void playerStopsDrawing() {
         player.setPlaying(false);
+        dealer.playTurn(deck);
+        dealerCards = dealer.getCards();
     }
 
+    public int getPlayerCardsValue() {
+        int totalValue = 0;
+        int acesCount = 0;
+        for (Card card : playerCards) {
+            totalValue += card.getValue();
+            if (card.getRank().equals("A")) {
+                acesCount++;
+            }
+        }
+        while (totalValue > 21 && acesCount > 0) {
+            totalValue -= 10;
+            acesCount--;
+        }
+        return totalValue;
+    }
 }
+
+
+
+
+
+
 
 
 

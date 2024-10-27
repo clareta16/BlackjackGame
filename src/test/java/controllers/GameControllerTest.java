@@ -54,7 +54,7 @@ class GameControllerTest {
     @Test
     void testCreateGame_Success() {
         String playerName = "TestPlayer";
-        Game game = new Game();
+        Game game = new Game(new Player(playerName));
         game.setId("1");
         game.setPlayer(new Player(playerName));
 
@@ -85,7 +85,8 @@ class GameControllerTest {
     @Test
     void testGetGameDetails_Success() {
         String gameId = "1";
-        Game game = new Game();
+        String playerName = "TestPlayer";
+        Game game = new Game(new Player(playerName));
         game.setId(gameId);
 
         when(gameService.getGameDetails(gameId)).thenReturn(Mono.just(game));
@@ -122,16 +123,15 @@ class GameControllerTest {
     void testPlayGame_Success() {
         String gameId = "1";
         String moveType = "hit";
-        Game game = new Game();
+
+        String playerName = "TestPlayer";
+        Game game = new Game(new Player(playerName));
         game.setId(gameId);
 
-        // Simular la resposta del servei per la jugada
         when(gameService.playGame(gameId, moveType)).thenReturn(Mono.just(game));
 
-        // Cridar al mètode playGame del controlador
         Mono<ResponseEntity<Game>> response = gameController.playGame(gameId, moveType);
 
-        // Verificar que la resposta és la correcta
         StepVerifier.create(response)
                 .expectNextMatches(responseEntity -> {
                     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -140,10 +140,8 @@ class GameControllerTest {
                 })
                 .verifyComplete();
 
-        // Verificar que el servei ha estat cridat una vegada
         verify(gameService, times(1)).playGame(gameId, moveType);
     }
-
 
     @Test
     void testPlayGame_NotFound() {
@@ -163,7 +161,7 @@ class GameControllerTest {
 
     @Test
     void testDeleteGame_NotFound() {
-        String gameId = "invalid-id";
+        String gameId = "invalidId";
 
         when(gameService.deleteGame(gameId)).thenReturn(Mono.error(new GameNotFoundException("Game not found")));
 
@@ -181,33 +179,28 @@ class GameControllerTest {
 
     @Test
     void testGetRanking_Success() {
-        // Arrange
         String username = "TestPlayer";
         Player player = new Player(username);
-        player.setWins(5); // Assuming the player has 5 wins for this test
+        player.setWins(5);
         Ranking rankingResponse = new Ranking(player.getUsername(), player.getWins());
 
-        // Mock the service to return the player when called with the username
-        when(gameService.getRankingByUsername(username)).thenReturn(Mono.just(player));
+        when(gameService.getRankingByUsernameId(username)).thenReturn(Mono.just(player));
 
-        // Act
         Mono<ResponseEntity<Ranking>> response = gameController.getRanking(username);
 
-        // Assert
         StepVerifier.create(response)
                 .expectNextMatches(responseEntity -> {
                     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-                    assertEquals(rankingResponse.getUsername(), responseEntity.getBody().getUsername());
+                    assertEquals(rankingResponse.getId(), responseEntity.getBody().getId());
                     assertEquals(rankingResponse.getWins(), responseEntity.getBody().getWins());
                     return true;
                 })
                 .verifyComplete();
 
-        // Verify that the service method was called with the correct username
-        verify(gameService, times(1)).getRankingByUsername(username);
+        verify(gameService, times(1)).getRankingByUsernameId(username);
     }
-
 }
+
 
 
 
